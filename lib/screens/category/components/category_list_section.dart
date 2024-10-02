@@ -1,3 +1,5 @@
+import 'package:admin/utility/extensions.dart';
+
 import '../../../core/data/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +52,7 @@ class CategoryListSection extends StatelessWidget {
                     dataProvider.categories.length,
                     (index) => categoryDataRow(dataProvider.categories[index], delete: () {
                       //TODO: should complete call  deleteCategory
+                      context.categoryProvider.deleteCategory(dataProvider.categories[index]);
                     }, edit: () {
                       showAddCategoryForm(context, dataProvider.categories[index]);
                     }),
