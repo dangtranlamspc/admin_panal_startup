@@ -48,13 +48,14 @@ class CouponCodeProvider extends ChangeNotifier {
         "applicableSubCategory" : selectedSubCategory?.sId,
         "applicableProduct" : selectedProduct?.sId,
       };
-      final response = await service.addItem(endpointUrl: 'coupons', itemData: coupon);
+      final response = await service.addItem(endpointUrl: 'couponCodes', itemData: coupon);
       if (response.isOk) {
         ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
         if (apiResponse.success == true) {
           clearFields();
           SnackBarHelper.showSuccessSnackBar('${apiResponse.message}');
           log('Coupon added');
+          _dataProvider.getAllCoupons();
         }else {
           SnackBarHelper.showErrorSnackBar('Failed to add Coupon : ${apiResponse.message}');
         }
@@ -85,13 +86,14 @@ class CouponCodeProvider extends ChangeNotifier {
         "applicableSubCategory" : selectedSubCategory?.sId,
         "applicableProduct" : selectedProduct?.sId,
       };
-        final response = await service.updateItem(endpointUrl: 'coupons', itemId: couponForUpdate?.sId ?? '', itemData: coupon);
+        final response = await service.updateItem(endpointUrl: 'couponCodes', itemId: couponForUpdate?.sId ?? '', itemData: coupon);
         if (response.isOk) {
           ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
           if (apiResponse.success == true) {
             clearFields();
-            SnackBarHelper.showErrorSnackBar('${apiResponse.message}');
+            SnackBarHelper.showSuccessSnackBar('${apiResponse.message}');
             log('Coupon added');
+            _dataProvider.getAllCoupons();
           }else {
             SnackBarHelper.showErrorSnackBar('Failed to add Coupon : ${apiResponse.message}');
           }
@@ -106,7 +108,7 @@ class CouponCodeProvider extends ChangeNotifier {
     }
   }
   //TODO: should complete submitCoupon
-  submitCategory () {
+  submitCoupon() {
     if (couponForUpdate != null) {
       updateCoupon();
     }else{
@@ -115,6 +117,22 @@ class CouponCodeProvider extends ChangeNotifier {
   }
 
   //TODO: should complete deleteCoupon
+  deleteCoupon (Coupon coupon) async {
+    try{
+      Response response = await service.deleteItem(endpointUrl: 'couponCodes', itemId: coupon.sId ?? '');
+      if (response.isOk) {
+        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        if (apiResponse.success == true) {
+          SnackBarHelper.showSuccessSnackBar('Coupon deleted successfully');
+        }
+      }else{
+        SnackBarHelper.showErrorSnackBar('Error ${response.body?['message'] ?? response.statusText}');
+      }
+    }catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 
 
 
