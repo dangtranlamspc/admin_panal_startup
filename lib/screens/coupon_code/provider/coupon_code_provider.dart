@@ -1,3 +1,8 @@
+import 'dart:developer';
+
+import 'package:admin/models/api_response.dart';
+import 'package:admin/utility/snack_bar_helper.dart';
+
 import '../../../models/coupon.dart';
 import '../../../models/product.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,13 +31,88 @@ class CouponCodeProvider extends ChangeNotifier {
   CouponCodeProvider(this._dataProvider);
 
   //TODO: should complete addCoupon
+  addCoupon () async {
+    try{
+      if (endDateCtrl.text.isEmpty) {
+        SnackBarHelper.showErrorSnackBar('Select end date');
+        return;
+      }
+      Map<String, dynamic> coupon = {
+        'couponCode' : couponCodeCtrl.text,
+        'discountType' : selectedDiscountType,
+        'discountAmount' : discountAmountCtrl.text,
+        'minimumPurchaseAmount' : minimumPurchaseAmountCtrl.text,
+        'endDate' : endDateCtrl.text,
+        'status' : selectedCouponStatus,
+        "applicableCategory" : selectedCategory?.sId,
+        "applicableSubCategory" : selectedSubCategory?.sId,
+        "applicableProduct" : selectedProduct?.sId,
+      };
+      final response = await service.addItem(endpointUrl: 'coupons', itemData: coupon);
+      if (response.isOk) {
+        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        if (apiResponse.success == true) {
+          clearFields();
+          SnackBarHelper.showSuccessSnackBar('${apiResponse.message}');
+          log('Coupon added');
+        }else {
+          SnackBarHelper.showErrorSnackBar('Failed to add Coupon : ${apiResponse.message}');
+        }
+      }else{
+        SnackBarHelper.showErrorSnackBar('Error ${response.body?['message'] ?? response.statusText}');
+      }
+    }catch (e) {
+      print(e);
+      SnackBarHelper.showErrorSnackBar('An error occurred : $e');
+      rethrow;
+    }
+  }
 
 
   //TODO: should complete updateCoupon
-
-
+  
+  updateCoupon () async {
+    try{
+      if (couponForUpdate != null) {
+        Map<String, dynamic> coupon = {
+        "couponCode" : couponCodeCtrl.text,
+        "discountType" : selectedDiscountType,
+        "discountAmount" : discountAmountCtrl.text,
+        "minimumPurchaseAmount" : minimumPurchaseAmountCtrl.text,
+        "endDate" : endDateCtrl.text,
+        "status" : selectedCouponStatus,
+        "applicableCategory" : selectedCategory?.sId,
+        "applicableSubCategory" : selectedSubCategory?.sId,
+        "applicableProduct" : selectedProduct?.sId,
+      };
+        final response = await service.updateItem(endpointUrl: 'coupons', itemId: couponForUpdate?.sId ?? '', itemData: coupon);
+        if (response.isOk) {
+          ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+          if (apiResponse.success == true) {
+            clearFields();
+            SnackBarHelper.showErrorSnackBar('${apiResponse.message}');
+            log('Coupon added');
+          }else {
+            SnackBarHelper.showErrorSnackBar('Failed to add Coupon : ${apiResponse.message}');
+          }
+        }else{
+          SnackBarHelper.showErrorSnackBar('Error ${response.body?['message'] ?? response.statusText}');
+        }
+      }
+    }catch (e) {
+      print(e);
+      SnackBarHelper.showErrorSnackBar('An error occurred : $e');
+      rethrow;
+    }
+  }
   //TODO: should complete submitCoupon
-
+  submitCategory () {
+    if (couponForUpdate != null) {
+      updateCoupon();
+    }else{
+      addCoupon();
+    }
+  }
 
   //TODO: should complete deleteCoupon
 

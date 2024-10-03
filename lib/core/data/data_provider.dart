@@ -63,6 +63,11 @@ class DataProvider extends ChangeNotifier {
   DataProvider() {
     getAllCategory();
     getAllSubCategory();
+    getAllBrands();
+    getAllVariantType();
+    getAllVariant();
+    getAllProduct();
+    getAllPoster();
   }
 
 
@@ -142,29 +147,153 @@ class DataProvider extends ChangeNotifier {
 
 
   //TODO: should complete getAllBrands
+    Future <List<Brand>> getAllBrands({bool showSnack = false}) async {
+    try{
+      Response response = await service.getItems(endpointUrl: 'brands');
+      if(response.isOk) {
+        ApiResponse<List<Brand>> apiResponse = ApiResponse<List<Brand>>.fromJson(
+          response.body, 
+          (json) => (json as List).map((item) => Brand.fromJson(item)).toList(),
+        );
+        _allBrands = apiResponse.data ?? [];
+        _filteredBrands = List.from(_allBrands);
+        notifyListeners();
+        if (showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      };
+    }catch (e) {
+      if(showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+    return _filteredBrands;
+  }
 
 
   //TODO: should complete filterBrands
 
+      void filterBrand(String keyword) {
+    if (keyword.isEmpty) {
+      _filteredBrands = List.from(_allBrands);
+
+    }else{
+      final lowerKeyword = keyword.toLowerCase();
+      _filteredBrands = _allBrands.where((brand) {
+        return (brand.name ?? '').toLowerCase().contains(lowerKeyword);
+      }).toList();
+    }
+    notifyListeners();
+  }
+
 
   //TODO: should complete getAllVariantType
+      Future <List<VariantType>> getAllVariantType({bool showSnack = false}) async {
+    try{
+      Response response = await service.getItems(endpointUrl: 'variantTypes');
+      if(response.isOk) {
+        ApiResponse<List<VariantType>> apiResponse = ApiResponse<List<VariantType>>.fromJson(
+          response.body, 
+          (json) => (json as List).map((item) => VariantType.fromJson(item)).toList(),
+        );
+        _allVariantTypes = apiResponse.data ?? [];
+        _filteredVariantTypes = List.from(_allVariantTypes);
+        notifyListeners();
+        if (showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      };
+    }catch (e) {
+      if(showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+    return _filteredVariantTypes;
+  }
 
 
   //TODO: should complete filterVariantTypes
 
+    void filterVariantType(String keyword) {
+      if (keyword.isEmpty) {
+        _filteredVariantTypes = List.from(_allVariantTypes);
+
+      }else{
+        final lowerKeyword = keyword.toLowerCase();
+        _filteredVariantTypes = _allVariantTypes.where((brand) {
+          return (brand.name ?? '').toLowerCase().contains(lowerKeyword);
+        }).toList();
+      }
+    notifyListeners();
+  }
 
 
   //TODO: should complete getAllVariant
+      Future <List<Variant>> getAllVariant({bool showSnack = false}) async {
+    try{
+      Response response = await service.getItems(endpointUrl: 'variants');
+      if(response.isOk) {
+        ApiResponse<List<Variant>> apiResponse = ApiResponse<List<Variant>>.fromJson(
+          response.body, 
+          (json) => (json as List).map((item) => Variant.fromJson(item)).toList(),
+        );
+        _allVariants = apiResponse.data ?? [];
+        _filteredVariants = List.from(_allVariants);
+        notifyListeners();
+        if (showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      };
+    }catch (e) {
+      if(showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+    return _filteredVariants;
+  }
 
 
   //TODO: should complete filterVariants
+      void filterVariant(String keyword) {
+      if (keyword.isEmpty) {
+        _filteredVariants = List.from(_allVariants);
+
+      }else{
+        final lowerKeyword = keyword.toLowerCase();
+        _filteredVariants = _allVariants.where((variant) {
+          return (variant.name ?? '').toLowerCase().contains(lowerKeyword);
+        }).toList();
+      }
+    notifyListeners();
+  }
 
 
   //TODO: should complete getAllProduct
+  Future <void> getAllProduct({bool showSnack = false}) async {
+    try {
+      Response response = await service.getItems(endpointUrl: 'products');
+      ApiResponse<List<Product>> apiResponse = ApiResponse<List<Product>>.fromJson(
+        response.body,
+        (json) => (json as List).map((item)=> Product.fromJson(item)).toList(),
+      );
+      _allProducts = apiResponse.data ?? [];
+      _filteredProducts = List.from(_allProducts);
+      notifyListeners();
+      if (showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+    }catch (e) {
+      rethrow;
+    }
+  }
 
 
   //TODO: should complete filterProducts
+  void filterProduct (String keyword) {
+    if (keyword.isEmpty) {
+      _filteredProducts = List.from(_allProducts);
+    }else {
+      final lowerKeyWord = keyword.toLowerCase();
 
+      _filteredProducts = _allProducts.where((product) {
+        final productNameContainsKeyword = (product.name ?? '').toLowerCase().contains(lowerKeyWord);
+        final categoryNameContainsKeyword = product.proSubCategoryId?.name?.toLowerCase().contains(lowerKeyWord) ?? false ;
+        final subCategoryNameContainsKeyword = product.proSubCategoryId?.name?.toLowerCase().contains(lowerKeyWord) ?? false;
+
+        return productNameContainsKeyword || categoryNameContainsKeyword || subCategoryNameContainsKeyword;
+      }).toList();
+    }
+    notifyListeners();
+  }
 
   //TODO: should complete getAllCoupons
 
@@ -172,10 +301,40 @@ class DataProvider extends ChangeNotifier {
   //TODO: should complete filterCoupons
 
 
-  //TODO: should complete getAllPosters
+    Future <List<Poster>> getAllPoster({bool showSnack = false}) async {
+    try{
+      Response response = await service.getItems(endpointUrl: 'posters');
+      if (response.isOk) {
+        ApiResponse<List<Poster>> apiResponse = ApiResponse<List<Poster>>.fromJson(
+          response.body,
+            (json) => (json as List).map((item) => Poster.fromJson(item)).toList(),
+        );
+        _allPosters = apiResponse.data ?? [] ;
+        _filteredPosters = List.from(_allPosters);
+        notifyListeners();
+        if (showSnack) SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      }
+
+    }catch(e) {
+      if (showSnack) SnackBarHelper.showErrorSnackBar(e.toString());
+    }
+    return _filteredPosters;
+  }
 
 
-  //TODO: should complete filterPosters
+  //TODO: should complete filterCategories
+  void filterPoster(String keyword) {
+    if (keyword.isEmpty) {
+      _filteredPosters = List.from(_allPosters);
+
+    }else{
+      final lowerKeyword = keyword.toLowerCase();
+      _filteredPosters = _allPosters.where((poster) {
+        return (poster.posterName ?? '').toLowerCase().contains(lowerKeyword);
+      }).toList();
+    }
+    notifyListeners();
+  }
 
 
   //TODO: should complete getAllNotifications
@@ -196,9 +355,42 @@ class DataProvider extends ChangeNotifier {
 
 
   //TODO: should complete filterProductsByQuantity
-
+  void filterProductsByQuantity(String productQntType) {
+    if (productQntType == 'All Produdct') {
+      _filteredProducts = List.from(_allProducts);
+    }else if (productQntType == 'Out of Stock') {
+      _filteredProducts = _allProducts.where((product) {
+        return product.quantity != null && product.quantity == 0;
+      }).toList();
+    } else if (productQntType == 'Limited Stock') {
+      _filteredProducts = _allProducts.where((product) {
+        return product.quantity != null && product.quantity == 1;
+      }).toList();
+    }else if (productQntType == 'Other Stock') {
+      _filteredProducts = _allProducts.where((product) {
+        return product.quantity != null && product.quantity != 0 && product.quantity != 1;
+      }).toList();
+    }else {
+      _filteredProducts = List.from(_allProducts);
+    }
+    notifyListeners();
+  }
+ 
 
   //TODO: should complete calculateProductWithQuantity
+  int calculateProductWithQuantity ({int ? quantity}) {
+    int totalProduct = 0;
+    if (quantity == null) {
+      totalProduct = _allProducts.length;
 
+    }else {
+      for (Product product in _allProducts) {
+        if (product.quantity != null && product.quantity == quantity) {
+          totalProduct +=1 ;
+        }
+      }
+    }
+    return totalProduct;
+  } 
 
 }

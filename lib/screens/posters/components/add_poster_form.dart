@@ -80,6 +80,7 @@ class PosterSubmitForm extends StatelessWidget {
                       if (context.posterProvider.addPosterFormKey.currentState!.validate()) {
                         context.posterProvider.addPosterFormKey.currentState!.save();
                         //TODO: should complete call submitPoster
+                        context.posterProvider.submitCategory();
                         Navigator.of(context).pop();
                       }
                     },

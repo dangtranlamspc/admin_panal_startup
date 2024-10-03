@@ -1,3 +1,4 @@
+import 'package:admin/utility/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import '../../utility/constants.dart';
@@ -54,6 +55,7 @@ class BrandScreen extends StatelessWidget {
                           IconButton(
                               onPressed: () {
                                 //TODO: should complete call getAllBrands
+                                context.dataProvider.getAllBrands(showSnack: true);
                               },
                               icon: Icon(Icons.refresh)),
                         ],

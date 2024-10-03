@@ -1,3 +1,5 @@
+import 'package:admin/utility/extensions.dart';
+
 import '../../../core/data/data_provider.dart';
 import 'add_poster_form.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +50,7 @@ class PosterListSection extends StatelessWidget {
                     dataProvider.posters.length,
                     (index) => posterDataRow(dataProvider.posters[index], delete: () {
                       //TODO: should complete call deletePoster
+                      context.posterProvider.deleteCategory(dataProvider.posters[index]);
 
                     }, edit: () {
                       showAddPosterForm(context, dataProvider.posters[index]);

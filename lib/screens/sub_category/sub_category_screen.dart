@@ -55,7 +55,7 @@ class SubCategoryScreen extends StatelessWidget {
                           IconButton(
                               onPressed: () {
                                 //TODO: should complete call getAllSubCategory
-                                context.dataProvider.getAllSubCategory(showSnack:  true);
+                                context.dataProvider.getAllSubCategory(showSnack: true);
                               },
                               icon: Icon(Icons.refresh)),
                         ],
